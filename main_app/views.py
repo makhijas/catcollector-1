@@ -1,21 +1,64 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+
+from django.http import HttpResponse, HttpResponseRedirect
+
+# import models
+from .models import Cat
+
+# import Django form classes
+# these handle CRUD for us
+class CatCreate(CreateView):
+  model = Cat
+  fields = '__all__'
+  success_url = '/cats'
+
+class CatUpdate(UpdateView):
+  model = Cat
+  fields = ['name', 'breed', 'description', 'age']
+
+  def form_valid(self, form):
+    self.object = form.save(commit=False)
+    self.object.save()
+    return HttpResponseRedirect('/cats/' + str(self.object.pk))
+
+class CatDelete(DeleteView):
+  model = Cat
+  success_url = '/cats'
+
 
 # Create your views here.
 def index(request):
-    return HttpResponse('<h1>Cat Collector</h1>')
+    return render(request, 'index.html')
 
 def about(request):
-    lorem_ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam a lorem non elit interdum congue ut vitae nibh. Nam maximus laoreet dui, hendrerit auctor ex convallis faucibus. Morbi posuere id nulla vitae facilisis. Morbi fermentum libero in varius malesuada. Cras condimentum lobortis neque, eu auctor dolor interdum quis. Nulla nec facilisis ante, vel efficitur nibh. Quisque venenatis augue condimentum nisi mollis rhoncus sit amet et leo.Sed eget ornare neque. Morbi pulvinar ante vitae tellus hendrerit mollis. Nullam ut gravida nulla. Donec sed dolor ligula. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque varius risus et dui lacinia, aliquet finibus est eleifend. Ut consequat dictum lacus in elementum. Nullam pretium varius maximus. Aliquam finibus aliquet diam, quis maximus diam sollicitudin vitae. Suspendisse sed suscipit est."
-    return HttpResponse(lorem_ipsum)
+    return render(request, 'about.html')
 
 def contact(request):
     return render(request, 'contact.html')
 
 
+# CATS
+def cats_index(request):
+    cats = Cat.objects.all()
+    return render(request, 'cats/index.html', { 'cats': cats })
+
+def cats_show(request, cat_id):
+    # we get access to that cat_id variable
+    # query for the specific cat clicked
+    cat = Cat.objects.get(id=cat_id)
+    return render(request, 'cats/show.html', { 'cat': cat })
+
+# Instrcutions
+# 1. Update index view function to look similar to the contact view function
+# 2. Add a index.html page with the current HTML that is displayed
+# 3. Update about view function to look similar to the contact view function
+# 4. Add a about.html page with the current HTML that is displayed
+# 5. Update your urls.py file (main_app) to look similar to the contact path
+
 # 1. Make a view function
 # 2. Make the html page
-# 2. Add the view to the urls.py inside of main_app.urls
+# 3. Add the view to the urls.py inside of main_app.urls
 
 # In browser
 # When I go to localhost:8000/contact

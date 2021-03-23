@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Collector</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+  </head>
+  <body>
+    <h1>{{ cat.name }}</h1>
+    <hr/>
+    <p>Breed: {{ cat.breed}}</p>
+    <p>Description: {{ cat.description }}</p>
+    <p>Age: {{ cat.age }}</p>
+        <!-- Add links for update and delete here... -->
+    <a class="update btn" href="{% url 'cats_update' cat.id %}">Update Details</a> |
+    <a class="delete btn" href="{% url 'cats_delete' cat.id %}">DELETE This Cat</a>
+  </body>
+</html>
